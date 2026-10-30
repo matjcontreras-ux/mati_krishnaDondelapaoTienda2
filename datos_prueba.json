@@ -1,0 +1,8 @@
+{
+  "productos": [
+    { "id": 1, "nombre": "Cloro Tradicional 1L", "categoria": "Desinfectantes", "precio": 1500, "stock": true },
+    { "id": 2, "nombre": "Limpiavidrios Gatillo 500ml", "categoria": "Limpieza", "precio": 2200, "stock": true },
+    { "id": 3, "nombre": "Detergente Líquido 3L", "categoria": "Lavandería", "precio": 5990, "stock": false },
+    { "id": 4, "nombre": "Esponja Multiuso (Pack 3)", "categoria": "Accesorios", "precio": 1200, "stock": true }
+  ]
+}

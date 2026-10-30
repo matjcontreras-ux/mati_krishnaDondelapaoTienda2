@@ -1,69 +1,113 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import datos from '../datos_prueba.json';
+
+interface Producto {
+  id: number;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  stock: boolean;
+}
 
 export default function Home() {
+  const productos: Producto[] = datos.productos;
+  const [busqueda, setBusqueda] = useState('');
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('Todas');
+
+  // Obtener lista única de categorías
+  const categorias = ['Todas', ...Array.from(new Set(productos.map((p) => p.categoria)))];
+
+  // Filtrar productos por búsqueda y categoría
+  const productosFiltrados = productos.filter((producto) => {
+    const coincideBusqueda = producto.nombre
+      .toLowerCase()
+      .includes(busqueda.toLowerCase());
+    const coincideCategoria =
+      categoriaSeleccionada === 'Todas' || producto.categoria === categoriaSeleccionada;
+
+    return coincideBusqueda && coincideCategoria;
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen bg-slate-50 p-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="mb-8 border-b pb-4">
+          <h1 className="text-3xl font-bold text-slate-800">Dondelapao Tienda</h1>
+          <p className="text-slate-600">Catálogo de Productos de Limpieza</p>
+        </header>
+
+        {/* Controles de Búsqueda y Filtros */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8 justify-between items-center">
+          <input
+            type="text"
+            placeholder="Buscar producto de limpieza..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="w-full md:w-80 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800"
+          />
+
+          <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+            {categorias.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setCategoriaSeleccionada(cat)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                  categoriaSeleccionada === cat
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-slate-600 border hover:bg-slate-100'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Grilla de Productos */}
+        {productosFiltrados.length === 0 ? (
+          <p className="text-slate-500 text-center py-12">
+            No se encontraron productos que coincidan con tu búsqueda.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        ) : (
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {productosFiltrados.map((producto) => (
+              <div
+                key={producto.id}
+                className="bg-white rounded-xl shadow-md p-6 border border-slate-100 flex flex-col justify-between hover:shadow-lg transition-shadow"
+              >
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                    {producto.categoria}
+                  </span>
+                  <h2 className="text-lg font-bold text-slate-800 mt-3">
+                    {producto.nombre}
+                  </h2>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-slate-400">Precio</p>
+                    <p className="text-xl font-bold text-slate-900">
+                      ${producto.precio.toLocaleString('es-CL')}
+                    </p>
+                  </div>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      producto.stock
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-rose-100 text-rose-700'
+                    }`}
+                  >
+                    {producto.stock ? 'Disponible' : 'Agotado'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </section>
+        )}
+      </div>
+    </main>
   );
 }
