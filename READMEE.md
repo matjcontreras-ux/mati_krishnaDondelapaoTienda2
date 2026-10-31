@@ -41,3 +41,4 @@ El proyecto cuenta con un sistema completo de navegación y gestión, incluyendo
    ```bash
    git clone [https://github.com/matjcontreras-ux/mati_krishnaDondelapaoTienda2.git](https://github.com/matjcontreras-ux/mati_krishnaDondelapaoTienda2.git)
    cd mati_krishnaDondelapaoTienda2
+ 
